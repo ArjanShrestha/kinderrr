@@ -1,4 +1,4 @@
-# KINDER — KU Campus Connections
+# KINDER — KU Campus Connections(Tinder For Kathmandu University)
 
 > **Not a dating app. A connection engine for Kathmandu University.**
 
