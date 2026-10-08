@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KINDER — KU Campus Connections</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="app">
+
+    <header class="topbar">
+        <div class="logo">
+            <div class="logo-icon">K</div>
+            <div>
+                <h2>KINDER</h2>
+                <small>KU Campus Connections</small>
+            </div>
+        </div>
+
+        <div class="coins">◎ {{ me.coins }} KU</div>
+    </header>
+
+    <main>
+        <section class="welcome">
+            <div>
+                <span class="badge">✦ AI POWERED · OPEN SOURCE</span>
+                <h1>Meet people.<br><span>Not just profiles.</span></h1>
+                <p>
+                    KINDER helps Kathmandu University students discover friends,
+                    project partners and communities beyond their own faculty.
+                </p>
+                <button id="findMatches" class="primary">✦ Find my AI matches</button>
+                <div id="aiStatus" class="status">AI is ready</div>
+            </div>
+            <div class="hero-visual">
+                <div class="circle">K</div>
+                <span class="bubble b1">💻</span>
+                <span class="bubble b2">🎨</span>
+                <span class="bubble b3">🌏</span>
+                <span class="bubble b4">🚀</span>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-title">
+                <div>
+                    <h2>People you might meet</h2>
+                    <p>AI looks at interests + cross-faculty potential.</p>
+                </div>
+            </div>
+
+            <div class="people">
+                {% for student in students %}
+                <article class="card" data-id="{{ student.id }}">
+                    <div class="card-top">
+                        <div class="avatar">{{ student.avatar }}</div>
+                        <span class="faculty">{{ student.faculty }}</span>
+                    </div>
+
+                    <h3>{{ student.name }}</h3>
+                    <small>{{ student.year }}</small>
+                    <p>{{ student.bio }}</p>
+
+                    <div class="tags">
+                        {% for interest in student.interests %}
+                        <span>{{ interest }}</span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="match">
+                        <strong class="score">--%</strong> AI match
+                        <div class="bar"><i></i></div>
+                    </div>
+
+                    <div class="card-buttons">
+                        <button class="icebreaker" data-id="{{ student.id }}">✦ Icebreaker</button>
+                        <button class="connect" data-name="{{ student.name }}">Connect</button>
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="features">
+            <div class="section-title">
+                <div>
+                    <h2>More than matching</h2>
+                    <p>The bigger idea behind KINDER.</p>
+                </div>
+            </div>
+
+            <div class="feature-grid">
+                <div class="feature"><span>👥</span><h3>Communities</h3><p>KUCC, Superteam, hackathon groups and more.</p></div>
+                <div class="feature"><span>◎</span><h3>KU Coins</h3><p>Prototype rewards for participation and contribution.</p></div>
+                <div class="feature"><span>📸</span><h3>Shared Memories</h3><p>Collect moments with people you meet.</p></div>
+                <div class="feature"><span>🗓️</span><h3>Plan Together</h3><p>Turn online connections into real campus experiences.</p></div>
+            </div>
+        </section>
+
+
+        <!-- SHARED MEMORIES -->
+        <section class="memories-section" id="memories">
+            <div class="section-title">
+                <div>
+                    <h2>📸 Shared Memories</h2>
+                    <p>Capture the moments you create with the people you meet on KINDER.</p>
+                </div>
+            </div>
+
+            <div class="memory-layout">
+                <div class="memory-panel">
+                    <div class="memory-panel-head">
+                        <div>
+                            <span class="badge">✦ BUILD MEMORIES</span>
+                            <h3>Share a moment</h3>
+                            <p>Pick a friend, add a photo and save it to your monthly memory wall.</p>
+                        </div>
+                        <div class="memory-icon">📸</div>
+                    </div>
+
+                    <form id="memoryForm" class="memory-form" enctype="multipart/form-data">
+                        <label>Share with
+                            <select name="friend" id="memoryFriend">
+                                {% for student in students %}
+                                <option value="{{ student.name }}">{{ student.name }}</option>
+                                {% endfor %}
+                            </select>
+                        </label>
+                        <label>Month
+                            <input type="month" name="month" id="memoryMonth">
+                        </label>
+                        <label>Caption
+                            <input type="text" name="caption" id="memoryCaption" maxlength="120" placeholder="e.g. Late-night hackathon prep ✨">
+                        </label>
+                        <label class="upload-box">
+                            <span>📷 Choose a photo</span>
+                            <input type="file" name="photo" id="memoryPhoto" accept="image/png,image/jpeg,image/gif,image/webp" required>
+                            <small>PNG, JPG, GIF or WEBP · max 8 MB</small>
+                        </label>
+                        <button class="primary" type="submit" id="shareMemory">+ Share memory</button>
+                    </form>
+                </div>
+
+                <div class="rewind-panel">
+                    <div class="rewind-glow">✦</div>
+                    <span class="badge">🤖 AI MONTHLY REWIND</span>
+                    <h3>Turn your month into a story.</h3>
+                    <p>Qwen turns your shared memories and captions into a short personalized recap.</p>
+                    <div class="rewind-stats">
+                        <div><strong id="memoryCount">{{ memories|length }}</strong><span>memories</span></div>
+                        <div><strong id="friendCount">0</strong><span>friends</span></div>
+                    </div>
+                    <button class="primary" id="createRewind">✦ Create AI Rewind</button>
+                    <small class="demo-note">Demo trigger: simulate the end of the month.</small>
+                </div>
+            </div>
+
+            <div class="memory-gallery-wrap">
+                <div class="gallery-head">
+                    <div>
+                        <h3>This month's moments</h3>
+                        <p id="galleryMonthLabel">Your shared memory wall</p>
+                    </div>
+                    <span class="gallery-pill">PRIVATE TO YOUR CONNECTIONS · DEMO</span>
+                </div>
+                <div class="memory-gallery" id="memoryGallery">
+                    {% for memory in memories %}
+                    <article class="memory-card">
+                        <img src="{{ url_for('static', filename='uploads/' + memory.filename) }}" alt="Shared memory">
+                        <div class="memory-meta"><strong>{{ memory.friend }}</strong><span>{{ memory.caption }}</span></div>
+                    </article>
+                    {% else %}
+                    <div class="empty-memories" id="emptyMemories">
+                        <div>📸</div>
+                        <h3>Your memory wall is empty</h3>
+                        <p>Upload your first photo above. Your future rewind starts here.</p>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <div class="section-title">
+                <div>
+                    <h2>KU Communities</h2>
+                    <p>Find a group that feels like yours.</p>
+                </div>
+            </div>
+            <div class="community-grid">
+                {% for community in communities %}
+                <div class="community">
+                    <span>{{ community.icon }}</span>
+                    <div>
+                        <h3>{{ community.name }}</h3>
+                        <p>{{ community.description }}</p>
+                        <small>{{ community.members }} members</small>
+                    </div>
+                    <button class="join">Join</button>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section>
+            <div class="section-title">
+                <div>
+                    <h2>Upcoming at KU</h2>
+                    <p>Connections become real when we meet.</p>
+                </div>
+            </div>
+            <div class="events">
+                {% for event in events %}
+                <div class="event">
+                    <div class="date">{{ event.date }}</div>
+                    <div><h3>{{ event.title }}</h3><p>{{ event.time }} · {{ event.location }}</p></div>
+                    <button class="join">Join</button>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <strong>KINDER</strong> · A student-built open-source prototype for Kathmandu University.
+        <br><small>KU Coins shown here are a prototype concept and are not an official KU currency.</small>
+    </footer>
+</div>
+
+<div id="modal" class="modal hidden">
+    <div class="modal-box">
+        <button id="closeModal" class="close">×</button>
+        <span class="badge">✦ AI ICEBREAKER</span>
+        <h2>Your conversation starter</h2>
+        <p id="icebreakerText">Thinking...</p>
+        <button id="copyIcebreaker" class="primary">Copy message</button>
+    </div>
+</div>
+
+
+<div id="rewindModal" class="modal hidden">
+    <div class="rewind-modal-box">
+        <button id="closeRewind" class="close">×</button>
+        <span class="badge">✦ KINDER REWIND · QWEN</span>
+        <p class="rewind-month" id="rewindMonthTitle">MONTHLY RECAP</p>
+        <h2 id="rewindTitle">Your month, together.</h2>
+        <p id="rewindStory" class="rewind-story">Qwen is creating your recap...</p>
+        <div id="rewindMontage" class="rewind-montage"></div>
+        <div class="rewind-footer">
+            <span id="rewindCount">0 memories</span>
+            <span>♥ KINDER</span>
+        </div>
+    </div>
+</div>
+
+<div id="toast" class="toast"></div>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
